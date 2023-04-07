@@ -25,10 +25,9 @@ doctorDutyList = []
 doctorNumberList = []
 
 for number in doctorNumber:
-    lines = number.text.strip().split('\n')
-    for line in lines:
-        if '+' in line:
-            doctorNumberList.append(line.strip())
+    link = number.find('a', href=True)
+    if link:
+        doctorNumberList.append(link['href'])
 
 for class_ in doctorLinks:
     for link in class_.find_all('a', href=True):
@@ -43,12 +42,13 @@ for duty in doctorDuty:
 Doctors = {
     'Name': doctorNamesList,
     'Expertise':doctorDutyList,
-    'Contact': doctorNumber,
+    'Contact': doctorNumberList,
     'Link': doctorLinkList
 }
 
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
+pd.set_option('display.max_colwidth', None)
 
 df = pd.DataFrame(Doctors)
 
