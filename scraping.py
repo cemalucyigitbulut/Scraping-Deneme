@@ -1,6 +1,6 @@
 import requests
-import re
 from bs4 import BeautifulSoup
+import pandas as pd
 
 baseurl = 'https://neareasthospital.com/'
 
@@ -11,53 +11,52 @@ headers = {
 
 r = requests.get('https://neareasthospital.com/doctors/?lang=en')
 soup = BeautifulSoup(r.content, 'html.parser')
-# soup =  BeautifulSoup(r.content,'html.parser')
-
 
 # adını yaptık class_ çünkü python classi olmadığı için böyle yazdık
 
 doctorNames = soup.find_all('div', class_='card-staff__title')
-doctorList2 = soup.find_all('div', class_='card-staff__head')
-doctorDuty = soup.find('div', class_='card-staff__duty').text.strip()
+doctorLinks = soup.find_all('div', class_='card-staff__head')
+doctorDuty = soup.find_all('div', class_='card-staff__duty')
+doctorNumber = soup.find_all('ul', class_='list is-unstyled is-horizontal card-staff__list')
+
 doctorLinkList = []
 doctorNamesList = []
+doctorDutyList = []
+doctorNumberList = []
 
-for class_ in doctorList2:
+for number in doctorNumber:
+    lines = number.text.strip().split('\n')
+    for line in lines:
+        if '+' in line:
+            doctorNumberList.append(line.strip())
+
+for class_ in doctorLinks:
     for link in class_.find_all('a', href=True):
         doctorLinkList.append(link['href'])
 
 for title in doctorNames:
     doctorNamesList.append(title.text.strip())
 
-textlink = "https://neareasthospital.com/doctor/yesim-ozgol/?lang=en"
-r = requests.get(textlink, headers=headers)
-soup = BeautifulSoup(r.content, 'html.parser')
-doctorEmailAndNumber = soup.find('div', class_='text-block').text.strip()
+for duty in doctorDuty:
+    doctorDutyList.append(duty.text.strip())
 
-lines1 = doctorEmailAndNumber.split('\n')
-DoctorInfo = []
-
-for line in lines1:
-        if '@' in line:
-            email = line.strip()
-            DoctorInfo.append(('Email', email))
-        elif '+' in line:
-            phone = line.strip()
-            DoctorInfo.append(('Phone', phone))
-    
-    
-doctor={
-     'Name':doctorNamesList,
-     'Contact':doctorEmailAndNumber,
-     'Link':doctorLinkList
-        
+Doctors = {
+    'Name': doctorNamesList,
+    'Expertise':doctorDutyList,
+    'Contact': doctorNumber,
+    'Link': doctorLinkList
 }
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
+
+df = pd.DataFrame(Doctors)
+
 try:
-    # print(doctorList2)
     # print(soup.find('div', class_='mariselle-title title is-size-4 is-title-underline is-text-center').text.strip())
     # decodedDoctorText = decodeEmail(doctorText)
     # print(decodedDoctorText)
-    print()
+    # print(doctorNamesList,doctorLinkList)
+    print(df)
 except UnicodeEncodeError:
     print('Cannot print some characters.')
