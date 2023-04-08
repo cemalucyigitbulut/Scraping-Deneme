@@ -1,13 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
+import sys
+import locale
+
+# set console encoding to utf-8
+sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
+locale.setlocale(locale.LC_ALL, 'tr_TR.UTF-8')
 
 baseurl = 'https://neareasthospital.com/'
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/111.0'
 }
-
 
 r = requests.get('https://neareasthospital.com/doctors/?lang=en')
 soup = BeautifulSoup(r.content, 'html.parser')
@@ -51,6 +56,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_colwidth', None)
 
 df = pd.DataFrame(Doctors)
+df.to_csv('doctors.txt', sep='|', index=False, encoding='utf-8-sig')
 
 try:
     # print(soup.find('div', class_='mariselle-title title is-size-4 is-title-underline is-text-center').text.strip())
