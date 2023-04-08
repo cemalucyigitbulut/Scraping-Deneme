@@ -43,7 +43,9 @@ for title in doctorNames:
     doctorNamesList.append(title.text.strip())
 
 for duty in doctorDuty:
-    doctorDutyList.append(duty.text.strip())
+    duty_text = duty.text.strip().replace('  ', ' ')
+    doctorDutyList.append(duty_text)
+
 
 Doctors = {
     'Name': doctorNamesList,
@@ -57,8 +59,6 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_colwidth', None)
 
 
-
-
 df = pd.DataFrame(Doctors)
 
 #texte yaz
@@ -69,14 +69,13 @@ df = pd.DataFrame(Doctors)
 # df.to_csv('doctors.txt', sep='|', index=False, encoding='utf-8-sig')
 
 
-
 try:
     # print(soup.find('div', class_='mariselle-title title is-size-4 is-title-underline is-text-center').text.strip())
     # decodedDoctorText = decodeEmail(doctorText)
     # print(decodedDoctorText)
     # print(doctorNamesList,doctorLinkList)
     print(tabulate(df, headers='keys', tablefmt='psql'))
-    with open('output.txt', 'w', encoding='utf8') as f:
+    with open('Doctors.txt', 'w', encoding='utf8') as f:
         f.write(tabulate(df, headers='keys', tablefmt='psql'))
 except UnicodeEncodeError:
     print('Cannot print some characters.')
