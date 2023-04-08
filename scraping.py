@@ -54,15 +54,26 @@ Doctors = {
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_colwidth', None)
+pd.set_option('display.width', 200)
+
+
 
 df = pd.DataFrame(Doctors)
-df.to_csv('doctors.txt', sep='|', index=False, encoding='utf-8-sig')
+
+#texte yaz
+with open('doctors.txt','w',encoding='utf-8') as f:
+    for index ,row in df.iterrows():
+        f.write(f"{row['Name']}\n{row['Expertise']}\n{row['Contact']}\n{row['Link']}\n\n")
+
+# df.to_csv('doctors.txt', sep='|', index=False, encoding='utf-8-sig')
+
+
 
 try:
     # print(soup.find('div', class_='mariselle-title title is-size-4 is-title-underline is-text-center').text.strip())
     # decodedDoctorText = decodeEmail(doctorText)
     # print(decodedDoctorText)
     # print(doctorNamesList,doctorLinkList)
-    print(df)
+    print(df.to_string(index=False))
 except UnicodeEncodeError:
     print('Cannot print some characters.')
