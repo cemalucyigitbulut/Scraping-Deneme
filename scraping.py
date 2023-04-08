@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import sys
 import locale
+from tabulate import tabulate
 
 # set console encoding to utf-8
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
@@ -54,16 +55,16 @@ Doctors = {
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_colwidth', None)
-pd.set_option('display.width', 200)
+
 
 
 
 df = pd.DataFrame(Doctors)
 
 #texte yaz
-with open('doctors.txt','w',encoding='utf-8') as f:
-    for index ,row in df.iterrows():
-        f.write(f"{row['Name']}\n{row['Expertise']}\n{row['Contact']}\n{row['Link']}\n\n")
+# with open('doctors.txt','w',encoding='utf-8') as f:
+#     for index ,row in df.iterrows():
+#         f.write(f"{row['Name']}\n{row['Expertise']}\n{row['Contact']}\n{row['Link']}\n\n")
 
 # df.to_csv('doctors.txt', sep='|', index=False, encoding='utf-8-sig')
 
@@ -74,6 +75,8 @@ try:
     # decodedDoctorText = decodeEmail(doctorText)
     # print(decodedDoctorText)
     # print(doctorNamesList,doctorLinkList)
-    print(df.to_string(index=False))
+    print(tabulate(df, headers='keys', tablefmt='psql'))
+    with open('output.txt', 'w', encoding='utf8') as f:
+        f.write(tabulate(df, headers='keys', tablefmt='psql'))
 except UnicodeEncodeError:
     print('Cannot print some characters.')
